@@ -34,6 +34,7 @@ describe('', function() {
 
   beforeEach(function() {
     // log out currently signed in user
+    console.log('BEFORE EACH FIRING')
     request('http://127.0.0.1:4568/logout', function(error, res, body) {});
 
     // delete link for roflzoo from db so it can be created later for the test
@@ -76,7 +77,7 @@ describe('', function() {
 
     var requestWithSession = request.defaults({jar: true});
 
-    xbeforeEach(function(done) {
+    beforeEach(function(done) {
       // create a user that we can then log-in with
       new User({
         'username': 'Phillip',
