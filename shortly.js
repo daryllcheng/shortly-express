@@ -31,17 +31,17 @@ app.use(session({
 
 app.use(util.loggify)
 
-app.get('/', 
+app.get('/', util.verifyUser,
 function(req, res) {
   res.render('index');
 });
 
-app.get('/create', 
+app.get('/create', util.verifyUser,
 function(req, res) {
   res.render('index');
 });
 
-app.get('/links', 
+app.get('/links', util.verifyUser,
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.status(200).send(links.models);
