@@ -50,7 +50,6 @@ function(req, res) {
 
 app.post('/links', 
 function(req, res) {
-  // console.log('req link: ', req)
   var uri = req.body.url;
 
   if (!util.isValidUrl(uri)) {
@@ -86,21 +85,13 @@ function(req, res) {
 /************************************************************/
 app.post('/login', 
   function(req, res){
-    // console.log('login page infos: ' ,req.body, req.method, req.url)
     const pass = req.body.password
     const username = req.body.username
-
     new User({username: username}).fetch().then(function(user){
-      // console.log('user attributes', user.attributes)
       if(user){
         if(user.verifyPassword(pass)){
           console.log('ure logged in mang')
-          // var sess = req.session;
-          // sess.loggedIn = true;
-          // sess.user = user;
-          // util.addUserToSession(user)
           req.session.user = user;
-          // res.end();
           res.redirect('/');
         } else {
           res.send('wrong password');
@@ -108,16 +99,8 @@ app.post('/login',
       } else {
         res.status(404).send('wrong username bro');
       }
-      // console.log('we got user: ', user);
-      // console.log('we got his pass: ', user.get('password'));
     })
-    //construct a query: "SELECT * FROM USERS", check the database for the username
-    //if the query returns true for user, check the password against the user's password
-    //if true, then redirect to home page, with a session enabled by using req.session.user = user
-    // else redirect to login page again and tell user bad username or password
 });
-
-//Daryl will impelment logout later
 
 
 app.get('/login', 
@@ -145,10 +128,6 @@ app.post('/signup', function(req, res){
 
 })
 
-// app.get('/index', 
-//   function(req, res){
-//     res.render('index')
-// });
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
