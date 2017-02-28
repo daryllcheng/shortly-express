@@ -30,6 +30,7 @@ app.use(session({
 
 
 app.use(util.loggify)
+// app.use(util.verifyUser);
 
 app.get('/', util.verifyUser,
 function(req, res) {
@@ -41,7 +42,7 @@ function(req, res) {
   res.render('index');
 });
 
-app.get('/links', util.verifyUser,
+app.get('/links', 
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.status(200).send(links.models);
@@ -112,6 +113,11 @@ app.get('/login',
 app.get('/signup', 
   function(req, res){
     res.render('signup')
+});
+
+app.post('logout', function(req, res){
+  req.session.user = null;
+  res.redirect('/login')
 });
 
 app.post('/signup', function(req, res){
