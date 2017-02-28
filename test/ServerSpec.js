@@ -10,7 +10,7 @@ var Link = require('../app/models/link');
 
 /************************************************************/
 // Mocha doesn't have a way to designate pending before blocks.
-// Mimic the behavior of xit and xdescribe with xbeforeEach.
+// Mimic the behavior of xit and describe with xbeforeEach.
 // Remove the 'x' from beforeEach block when working on
 // authentication tests.
 /************************************************************/
@@ -347,6 +347,119 @@ describe('', function() {
       });
     });
 
-  }); // 'Account Login'
+  });
+
+   // 'Account Login'
+describe('Account Logout', function() {
+
+  var requestWithSession = request.defaults({ jar: true });
+
+  beforeEach(function(done) {
+    new User({
+      'username': 'Phillip',
+      'password': 'Phillip'
+    }).save().then(function() {
+      done();
+    });
+  });
+
+  it('Logs out existing users', function(done) {
+    var options = {
+      'method': 'GET',
+      'uri': 'http://127.0.0.1:4568/logout'
+    }
+    requestWithSession(options, function(error, res, body) {
+      var currentLocation = res.request.href;
+      expect(currentLocation).to.equal('http://127.0.0.1:4568/login');
+      done();
+    });
+  });
+
+  it('Redirects logged out users to login page', function(done) {
+    var logIn = {
+      'method': 'POST',
+      'uri': 'http://127.0.0.1:4568/login',
+      'json': {
+        'username': 'Phillip',
+        'password': 'Phillip'
+      }
+    };
+
+    var logOut = {
+      'method': 'GET',
+      'uri': 'http://127.0.0.1:4568/logout'
+    } 
+
+    var access = {
+      'method': 'GET',
+      'uri': 'http://127.0.0.1:4568/'
+    };
+    requestWithSession(logIn, function(error, res, body) {
+      expect(res.headers.location).to.equal('/');
+      requestWithSession(logOut, function(error, res, body) {
+        expect(res.request.href).to.equal('http://127.0.0.1:4568/login');
+          requestWithSession(access, function(error, res, body) {
+            expect(res.request.href).to.equal('http://127.0.0.1:4568/login');
+            done();
+          });
+        });
+    });
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 });

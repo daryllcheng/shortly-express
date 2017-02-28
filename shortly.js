@@ -42,7 +42,7 @@ function(req, res) {
   res.render('index');
 });
 
-app.get('/links', 
+app.get('/links', util.verifyUser,
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.status(200).send(links.models);
@@ -86,6 +86,7 @@ function(req, res) {
 /************************************************************/
 app.post('/login', 
   function(req, res){
+
     const pass = req.body.password
     const username = req.body.username
     new User({username: username}).fetch().then(function(user){
@@ -116,7 +117,7 @@ app.get('/signup',
 });
 
 app.get('/logout', function(req, res){
-  console.log('sess: ',req.session)
+  // console.log('sess: ',req.session)
   req.session.user = null;
   res.redirect('/login')
 });
