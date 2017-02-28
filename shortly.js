@@ -97,7 +97,8 @@ app.post('/login',
           res.send('wrong password');
         }
       } else {
-        res.status(404).send('wrong username bro');
+        // res.send('wrong username bro');
+        res.redirect('/login')
       }
     })
 });
