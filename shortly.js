@@ -103,7 +103,7 @@ app.post('/login',
           // res.end();
           res.redirect('/');
         } else {
-          res.end('wrong password');
+          res.send('wrong password');
         }
       } else {
         res.status(404).send('wrong username bro');
@@ -129,6 +129,21 @@ app.get('/signup',
   function(req, res){
     res.render('signup')
 });
+
+app.post('/signup', function(req, res){
+  const { username, password } = req.body;
+  new User( { username } ).fetch().then(function(user){
+    if(user){
+      res.send('username already exists')
+    } else {
+      new User({ username, password }).save().then(function(user){
+        req.session.user = user;
+        res.redirect('/');
+      })
+    }
+  })
+
+})
 
 // app.get('/index', 
 //   function(req, res){
