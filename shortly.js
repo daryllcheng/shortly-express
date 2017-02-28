@@ -115,7 +115,8 @@ app.get('/signup',
     res.render('signup')
 });
 
-app.post('logout', function(req, res){
+app.get('/logout', function(req, res){
+  console.log('sess: ',req.session)
   req.session.user = null;
   res.redirect('/login')
 });
