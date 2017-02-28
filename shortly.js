@@ -2,7 +2,7 @@ var express = require('express');
 var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
-
+var session = require('express-session');
 
 var db = require('./app/config');
 var Users = require('./app/collections/users');
@@ -21,7 +21,15 @@ app.use(bodyParser.json());
 // Parse forms (signup/login)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
+app.use(session({ 
+  secret: 'keyboard cat', 
+  cookie: { maxAge: 60000 },
+  resave: false,
+  saveUninitialized: true
+}));
 
+
+app.use(util.loggify)
 
 app.get('/', 
 function(req, res) {
@@ -42,6 +50,7 @@ function(req, res) {
 
 app.post('/links', 
 function(req, res) {
+  // console.log('req link: ', req)
   var uri = req.body.url;
 
   if (!util.isValidUrl(uri)) {
@@ -75,8 +84,56 @@ function(req, res) {
 /************************************************************/
 // Write your authentication routes here
 /************************************************************/
+app.post('/login', 
+  function(req, res){
+    // console.log('login page infos: ' ,req.body, req.method, req.url)
+    const pass = req.body.password
+    const username = req.body.username
+
+    new User({username: username}).fetch().then(function(user){
+      // console.log('user attributes', user.attributes)
+      if(user){
+        if(user.verifyPassword(pass)){
+          console.log('ure logged in mang')
+          // var sess = req.session;
+          // sess.loggedIn = true;
+          // sess.user = user;
+          // util.addUserToSession(user)
+          req.session.user = user;
+          // res.end();
+          res.redirect('/');
+        } else {
+          res.end('wrong password');
+        }
+      } else {
+        res.status(404).send('wrong username bro');
+      }
+      // console.log('we got user: ', user);
+      // console.log('we got his pass: ', user.get('password'));
+    })
+    //construct a query: "SELECT * FROM USERS", check the database for the username
+    //if the query returns true for user, check the password against the user's password
+    //if true, then redirect to home page, with a session enabled by using req.session.user = user
+    // else redirect to login page again and tell user bad username or password
+});
+
+//Daryl will impelment logout later
 
 
+app.get('/login', 
+  function(req, res){
+    res.render('login')
+});
+
+app.get('/signup', 
+  function(req, res){
+    res.render('signup')
+});
+
+// app.get('/index', 
+//   function(req, res){
+//     res.render('index')
+// });
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail

@@ -34,7 +34,6 @@ describe('', function() {
 
   beforeEach(function() {
     // log out currently signed in user
-    console.log('BEFORE EACH FIRING')
     request('http://127.0.0.1:4568/logout', function(error, res, body) {});
 
     // delete link for roflzoo from db so it can be created later for the test
@@ -94,12 +93,15 @@ describe('', function() {
         };
         // login via form and save session info
         requestWithSession(options, function(error, res, body) {
+          console.log('before done')
           done();
+          console.log('after done')
         });
       });
     });
 
     it('Only shortens valid urls, returning a 404 - Not found for invalid urls', function(done) {
+      console.log('running test 1')
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/links',
